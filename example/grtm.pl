@@ -66,7 +66,7 @@ foreach (grep(/^-/,@ARGV)) {
    } elsif ($opt eq "N") {
      $m = $value[0];
      $dt = $value[1] if $#value > 0;
-     $taper = $value[2] if $#value > 3;
+     $taper = $value[2] if $#value > 3;  # TODO: value > 1???
    }elsif ($opt eq "R") {
      $r_depth = $value[0];
      $rdep = "_$r_depth";
@@ -80,6 +80,7 @@ foreach (grep(/^-/,@ARGV)) {
    }
 }
 my (@dist) = grep(!/^-/,@ARGV);
+
 
 my $dirnm = "${model}_$s_depth";
 mkdir ($dirnm,0777) unless -d $dirnm or $m <= 2;
@@ -143,7 +144,8 @@ exit(0) unless $m > 2 and $grt ne "cat";
 
 # save tp and ts into the sac header of Greens' functions
 foreach (@dist) {
-  system("sachd $sac_com{$_} f $dirnm/$_$rdep.grn.0 $dirnm/$_$rdep.grn.1 $dirnm/$_$rdep.grn.3 $dirnm/$_$rdep.grn.4 $dirnm/$_$rdep.grn.5");
+#   system("sachd $sac_com{$_} f $dirnm/$_$rdep.grn.0 $dirnm/$_$rdep.grn.1 $dirnm/$_$rdep.grn.3 $dirnm/$_$rdep.grn.4 $dirnm/$_$rdep.grn.5");
+  system("sacch $sac_com{$_} $dirnm/$_$rdep.grn.0 $dirnm/$_$rdep.grn.1 $dirnm/$_$rdep.grn.3 $dirnm/$_$rdep.grn.4 $dirnm/$_$rdep.grn.5");
 }
 
 exit(0);
@@ -249,7 +251,8 @@ sub ps_arr {
         $sa = $vs[$src_layer]*$aaa[9]; $dn=-1;
      }
      $sa = atan2($sa,$dn*sqrt(abs(1.-$sa*$sa)))*180/3.14159;
-     $sac_com{$dist[$j]}=sprintf("t1 $tp t2 $ts user1 %6.2f user2 %6.2f",$pa,$sa);
+   #   $sac_com{$dist[$j]}=sprintf("t1 $tp t2 $ts user1 %6.2f user2 %6.2f",$pa,$sa);
+     $sac_com{$dist[$j]}=sprintf("t1=$tp t2=$ts user1=%.2f user2=%.2f",$pa,$sa);
      $t0{$dist[$j]} = $tp;
 #    printf "t0 %f\n",$tp;
 #    print STDERR "$sac_com{$dist[$j]} $t0{$dist[$j]}\n";
